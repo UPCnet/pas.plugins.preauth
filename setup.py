@@ -10,29 +10,7 @@ def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 version = '1.0'
-
-long_description = (
-    read('docs', 'README.txt')
-    + '\n' +
-    'Change history\n'
-    '**************\n'
-    + '\n' +
-    read('docs', 'CHANGES.txt')
-    + '\n' +
-    'Detailed Documentation\n'
-    '**********************\n'
-    + '\n' +
-    read('pas',
-         'plugins',
-         'preauth', 'README.txt')
-    + '\n' +
-    'Contributors\n'
-    '************\n'
-    + '\n' +
-    read('docs', 'CONTRIBUTORS.txt')
-    + '\n' +
-    'Download\n'
-    '********\n')
+long_description = open("README.rst").read() + "\n" + open(os.path.join("docs", "HISTORY.txt")).read()
 
 tests_require = ['zope.testing']
 
@@ -48,9 +26,9 @@ setup(name='pas.plugins.preauth',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         ],
       keywords='',
-      author='',
-      author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      author='UPCnet Plone Team',
+      author_email='plone.team@upcnet.es',
+      url='https://github.com/UPCnet/pas.plugins.preauth',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['pas', 'pas.plugins'],
@@ -68,6 +46,4 @@ setup(name='pas.plugins.preauth',
       [z3c.autoinclude.plugin]
       target = plone
       """,
-      setup_requires=["PasteScript"],
-      paster_plugins=["ZopeSkel"],
       )
