@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<import-steps>
+ <import-step id="pas.plugins.preauth.setup" 
+              handler="pas.plugins.preauth.setuphandlers.setupPlugin"
+              title="Setup PreAuth Plugin"
+              version="20120131">
+  <dependency step="plone-final"/>
+  Setup LDAP Plugin
+ </import-step>
+</import-steps>

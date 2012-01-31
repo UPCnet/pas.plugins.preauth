@@ -1,0 +1,20 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="pas.plugins.preauth">
+
+  <five:registerPackage package="." initialize=".initialize" />
+  <include package=".browser" />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="PreAuth Plugin for PAS - Zope 2 Base Installation"
+      directory="profiles/default"
+      description="Extension profile for pas.plugins.preauth Zope Base."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+
+</configure>
