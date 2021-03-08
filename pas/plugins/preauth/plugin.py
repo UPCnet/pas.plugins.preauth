@@ -50,7 +50,11 @@ class PreauthHelper(BasePlugin):
         tasks = list(getAdapters((self,), IPreauthTask))
         for name, task in tasks:
             # IPreauthTask adapters must implement execute method
-            task.execute(credentials)
+            res = task.execute(credentials)
+            # Modificamos este codigo para que si la respuesta del oauthTokenRetriever mrs5.max.auth.py es BadUsernameOrPasswordError
+            # no continue mirando los siguientes plugins de Authentication Plugins
+            if res == 'BadUsernameOrPasswordError':
+                return res
 
         # Return None always
         return None
