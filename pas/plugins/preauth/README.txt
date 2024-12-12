@@ -1,44 +1,72 @@
-Tests for pas.plugins.preauth
+import unittest
+from plone.testing import layered
+from plone import api
+from pas.plugins.preauth.plugin import PreauthHelper
+from plone.app.testing import login, logout, TEST_USER_NAME, TEST_USER_PASSWORD
+from plone.app.testing import setRoles, TEST_USER_ID
+from plone.testing.z2 import Browser
+from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+from pas.plugins.preauth.tests import MY_INTEGRATION_TESTING  
 
-test setup
-----------
+class TestPreauthPluginSetup(unittest.TestCase):
+    """Test the PreauthHelper plugin installation and setup"""
 
-    >>> from Testing.ZopeTestCase import user_password
-    >>> from Products.Five.testbrowser import Browser
-    >>> browser = Browser()
+    layer = MY_INTEGRATION_TESTING  
 
-Plugin setup
-------------
+    def setUp(self):
+        """Set up the necessary data and environment"""
+        self.portal = self.layer['portal']
+        self.acl_users_url = f"{self.portal.absolute_url()}/acl_users"
+        self.browser = Browser(self.layer['app'])  
+        login(self.portal, TEST_USER_NAME)
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])  
 
-    >>> acl_users_url = "%s/acl_users" % self.portal.absolute_url()
-    >>> browser.addHeader('Authorization', 'Basic %s:%s' % ('portal_owner', user_password))
-    >>> browser.open("%s/manage_main" % acl_users_url)
-    >>> browser.url
-    'http://nohost/plone/acl_users/manage_main'
-    >>> form = browser.getForm(index=0)
-    >>> select = form.getControl(name=':action')
+    def test_plugin_is_installed(self):
+        """Test that the PreauthHelper plugin is in the list of available plugins"""
+        self.browser.open(f"{self.acl_users_url}/manage_main")
+        
+        # Find the form to add a new plugin
+        form = self.browser.getForm(index=0)
+        select = form.getControl(name=':action')
 
-pas.plugins.preauth should be in the list of installable plugins:
+        # Check that 'Preauth Helper' is listed among installable plugins
+        self.assertIn('Preauth Helper', select.displayOptions)
 
-    >>> 'Preauth Helper' in select.displayOptions
-    True
+    def test_add_plugin(self):
+        """Test that we can add the PreauthHelper plugin to acl_users"""
+        self.browser.open(f"{self.acl_users_url}/manage_main")
+        form = self.browser.getForm(index=0)
+        select = form.getControl(name=':action')
 
-and we can select it:
+        # Select the 'Preauth Helper' plugin
+        select.getControl('Preauth Helper').click()
+        self.assertEqual(select.displayValue, ['Preauth Helper'])
+        self.assertEqual(select.value, ['manage_addProduct/pas.plugins.preauth/manage_add_preauth_helper_form'])
 
-    >>> select.getControl('Preauth Helper').click()
-    >>> select.displayValue
-    ['Preauth Helper']
-    >>> select.value
-    ['manage_addProduct/pas.plugins.preauth/manage_add_preauth_helper_form']
+        # Add the 'Preauth Helper' plugin to acl_users
+        self.browser.getForm(name='manage_add_preauth_helper_form').submit()
 
-we add 'Preauth Helper' to acl_users:
+        # Ensure the plugin was added
+        acl_users = getToolByName(self.portal, 'acl_users')
+        self.assertIn('myplugin', acl_users.objectIds()) 
 
-    >>> from pas.plugins.preauth.plugin import PreauthHelper
-    >>> myhelper = PreauthHelper('myplugin', 'Preauth Helper')
-    >>> self.portal.acl_users['myplugin'] = myhelper
+    def test_preauth_helper_functionality(self):
+        """Test that PreauthHelper works after installation"""
+        # Manually add the PreauthHelper plugin instance
+        myhelper = PreauthHelper('myplugin', 'Preauth Helper')
+        self.portal.acl_users['myplugin'] = myhelper
 
-and so on. Continue your tests here
+        # Test the plugin functionality
+        # Example test: Check if the plugin can handle credentials
+        credentials = {'login': 'testuser', 'password': 'testpass'}
+        result = myhelper.authenticateCredentials(credentials)
 
-    >>> 'ALL OK'
-    'ALL OK'
+        # Check the expected behavior after authentication
+        self.assertEqual(result, None)  
+    def tearDown(self):
+        """Cleanup after tests"""
+        logout()
 
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromTestCase(TestPreauthPluginSetup)
