@@ -13,9 +13,13 @@
       description="Extension profile for pas.plugins.preauth Zope Base."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+
+
+      <!-- TODO: Esto de dónde sale? 
+      No estaba antes y no existe el archivo -->
       
-  <adapter
+<!--   <adapter
   name="oauthtokenretriever"
-  factory=".oauth2.oauthTokenRetriever" />
+  factory=".oauth2.oauthTokenRetriever" /> -->
 
 </configure>
