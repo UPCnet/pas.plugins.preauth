@@ -1,5 +1,6 @@
-import install
 import logging
+
+from pas.plugins.preauth import install
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,7 @@
 from AccessControl.Permissions import manage_users
+from pas.plugins.preauth import plugin
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService import registerMultiPlugin
-
-import plugin
 
 manage_add_preauth_form = PageTemplateFile('browser/add_plugin',
                                            globals(), __name__='manage_add_preauth_form')
